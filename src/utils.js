@@ -54,7 +54,9 @@ export function checkStructure(result, structure) {
         }
       }
       else {
-        recurse(node.body.body, currentList);
+        if(node.body && node.body.body) {
+          recurse(node.body.body, currentList);
+        }
       }
     });
   }
