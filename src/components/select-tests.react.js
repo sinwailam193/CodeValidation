@@ -32,6 +32,7 @@ export default class SelectTests extends Component {
         <select value={this.state.selectedOption} onChange={this._handleChange}>
           <option>Whitelist of specific functionality</option>
           <option>Blacklist of specific functionality</option>
+          <option>Determine the rough structure of the program</option>
         </select>
       </div>
     );

@@ -14,21 +14,24 @@ export default class FeedBack extends Component {
     Depending on what test the user selected, we render our feedback based on what they are testing against.
   */
   _renderList = () => {
-    const {whiteForStatement, whiteIfStatement, whiteVariableDeclaration, blackForStatement, blackIfStatement, blackVariableDeclaration, blackWhileStatement, selectedTest} = this.props;
+    const {whiteForStatement, whiteVariableDeclaration, blackIfStatement, blackWhileStatement, structureForStatement, structureIfStatement, selectedTest} = this.props;
     if(selectedTest === "Blacklist of specific functionality") {
       return (
         <ul>
-          <li className={"feedback-list " + (blackForStatement && blackVariableDeclaration ? "hide" : "")}>This program MUST use a 'for loop' and a 'variable declaration'.</li>
-          <li className={"feedback-list " + (blackWhileStatement && blackIfStatement ? "hide" : "")}>This program MUST NOT use a 'while loop' or an 'if statement'.</li>
+          <p className={"feedback-list " + (blackWhileStatement && blackIfStatement ? "hide" : "")}>This program MUST NOT use a 'while loop' or an 'if statement'.</p>
         </ul>
       );
     }
-    return (
-      <ul>
-        <li className={"feedback-list " + (whiteForStatement && whiteVariableDeclaration ? "hide" : "")}>This program MUST use a 'for loop' and a 'variable declaration'.</li>
-        <li className={"feedback-list " + (whiteIfStatement && whiteForStatement ? "hide" : "")}>There should be a 'for loop' and inside of it there should be an 'if statement'.</li>
-      </ul>
-    );
+    else if(selectedTest === "Whitelist of specific functionality" || selectedTest === "") {
+      return (
+        <p className={"feedback-list " + (whiteForStatement && whiteVariableDeclaration ? "hide" : "")}>This program MUST use a 'for loop' and a 'variable declaration'.</p>
+      );
+    }
+    else {
+      return (
+        <p className={"feedback-list " + (structureForStatement && structureIfStatement ? "hide" : "")}>There should be a 'for loop' and inside of it there should be an 'if statement'.</p>
+      );
+    }
   };
 
   /*

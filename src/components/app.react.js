@@ -3,7 +3,7 @@ import Codemirror from 'react-codemirror';
 import esprima from 'esprima';
 import SelectTests from './select-tests.react';
 import FeedBack from './feedback.react';
-import { checkBlackCode, checkWhiteCode } from '../utils';
+import { checkCode, checkStructure } from '../utils';
 
 export default class App extends Component {
 
@@ -19,12 +19,11 @@ export default class App extends Component {
       textarea: "",
       selectedTest: "",
       whiteForStatement: false,
-      whiteIfStatement: false,
       whiteVariableDeclaration: false,
-      blackForStatement: false,
       blackIfStatement: true,
-      blackVariableDeclaration: false,
-      blackWhileStatement: true
+      blackWhileStatement: true,
+      structureForStatement: false,
+      structureIfStatement: false
     };
   }
 
@@ -43,6 +42,9 @@ export default class App extends Component {
     else if(selectedTest === "Blacklist of specific functionality") {
       this._checkBlackListCode(newCode);
     }
+    else {
+      this._checkStructureCode(newCode);
+    }
   };
 
   /*
@@ -51,8 +53,8 @@ export default class App extends Component {
   _checkWhiteListCode = (code) => {
     const result = esprima.parse(code, { sourceType: 'script' }); 
     const arr = [...result.body];
-    const checkAgainst = ["ForStatement", "IfStatement", "VariableDeclaration"];
-    const checkResult = checkWhiteCode(arr, checkAgainst);
+    const checkAgainst = ["ForStatement", "VariableDeclaration"];
+    const checkResult = checkCode(arr, checkAgainst);
     let obj = {};
     checkAgainst.forEach((value) => {
       if(checkResult.indexOf(value) < 0) {
@@ -71,25 +73,40 @@ export default class App extends Component {
   _checkBlackListCode = (code) => {
     const result = esprima.parse(code, { sourceType: 'script' }); 
     const arr = [...result.body];
-    const checkAgainst = ["ForStatement", "IfStatement", "VariableDeclaration", "WhileStatement"];
-    const checkResult = checkBlackCode(arr, checkAgainst);
+    const checkAgainst = ["IfStatement", "WhileStatement"];
+    const checkResult = checkCode(arr, checkAgainst);
     let obj = {};
     checkAgainst.forEach((value) => {
-      if(value === "WhileStatement" || value === "IfStatement") {
-        if(checkResult.indexOf(value) < 0) {
-          obj[`black${value}`] = false;
-        }
-        else if(checkResult.indexOf(value) > -1) {
-          obj[`black${value}`] = true;
-        }
+      if(checkResult.indexOf(value) < 0) {
+        obj[`black${value}`] = false;
       }
-      else {
-        if(checkResult.indexOf(value) < 0) {
-          obj[`black${value}`] = true;
-        }
-        else {
-          obj[`black${value}`] = false;
-        }
+      else if(checkResult.indexOf(value) > -1) {
+        obj[`black${value}`] = true;
+      }
+    });
+    this.setState(obj);
+  };
+
+  /*
+    if the user is currently selecting the structure funcationalities, then we will check the new code against the structure requirements.
+  */
+  _checkStructureCode = (code) => {
+    const result = esprima.parse(code, { sourceType: 'script' }); 
+    const arr = [...result.body];
+
+    /* 
+      unlike the previous two, we use linked-list to represent the structure that we want, eg. within Forstatement, there should be a Ifstatement and 
+      it is represented by the property next in the linked list
+    */
+    const checkAgainst = {value: "ForStatement", next: {value: "IfStatement", next: null}};
+    const checkResult = checkStructure(arr, checkAgainst);
+    let obj = {};
+    ["ForStatement", "IfStatement"].forEach(value => {
+      if(checkResult.indexOf(value) < 0) {
+        obj[`structure${value}`] = true;
+      }
+      else if(checkResult.indexOf(value) > -1) {
+        obj[`structure${value}`] = false;
       }
     });
     this.setState(obj);
@@ -102,18 +119,29 @@ export default class App extends Component {
       this.setState({
         selectedTest: test,
         whiteForStatement: false,
-        whiteIfStatement: false,
-        whiteVariableDeclaration: false
+        whiteVariableDeclaration: false,
+        structureForStatement: false,
+        structureIfStatement: false
       });
       this._checkBlackListCode(textarea);
+    }
+    else if(test === "Determine the rough structure of the program") {
+      this.setState({
+        selectedTest: test,
+        whiteForStatement: false,
+        whiteVariableDeclaration: false,
+        blackIfStatement: true,
+        blackWhileStatement: true
+      }); 
+      this._checkStructureCode(textarea);
     }
     else {
       this.setState({
         selectedTest: test,
-        blackForStatement: false,
         blackIfStatement: true,
-        blackVariableDeclaration: false,
-        blackWhileStatement: true
+        blackWhileStatement: true,
+        structureForStatement: false,
+        structureIfStatement: false
       });  
       this._checkWhiteListCode(textarea);
     }
@@ -127,15 +155,20 @@ export default class App extends Component {
     if(selectedTest === "Blacklist of specific functionality") {
       return "Without using a 'while statement' or an 'if statement' find the sum of the elements in an array: [1,2,3,4]";
     }
-    return "Using 'for loops' and 'if statements' write a program that consoles multiples of 5 as 'fizz', multiples of 3 as 'buzz' and multiples of 3 and 5 as 'fizzbuzz' from 1 to 100."
+    else if(selectedTest === "Determine the rough structure of the program") {
+      return "Using 'if statements' within a 'for-loop' write a program that consoles multiples of 5 as 'fizz', multiples of 3 as 'buzz' and multiples of 3 and 5 as 'fizzbuzz' from 1 to 100.";
+    }
+    else {
+      return "Using a 'for loop' and 'variable declaration' print out the list of names in this array: ['Aaron', 'John', 'Harry']";
+    }
   };
 
   /*
     This is rendering the App component
   */
   render() {
-    const {whiteForStatement, whiteIfStatement, whiteVariableDeclaration, blackForStatement, blackIfStatement, blackVariableDeclaration, blackWhileStatement, selectedTest} = this.state;
-    const condition = {whiteForStatement, whiteIfStatement, whiteVariableDeclaration, blackForStatement, blackIfStatement, blackVariableDeclaration, blackWhileStatement, selectedTest};
+    const {whiteForStatement, whiteVariableDeclaration, blackIfStatement, blackWhileStatement, structureForStatement, structureIfStatement, selectedTest} = this.state;
+    const condition = {whiteForStatement, whiteVariableDeclaration, blackIfStatement, blackWhileStatement, structureForStatement, structureIfStatement, selectedTest};
     let options = {
       lineNumbers: true,
       mode:  "xml",
