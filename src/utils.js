@@ -32,7 +32,7 @@ function valueToArr(head) {
   let current = head, arr = [];
   while(current) {
     arr.push(current.value);
-    current = current.next;
+    current = current.child;
   }
   return arr;
 }
@@ -50,8 +50,11 @@ export function checkStructure(result, structure) {
           arr.splice(arr.indexOf(node.type), 1);
         }
         if(node.body && node.body.body) {
-          recurse(node.body.body, currentList.next);
+          recurse(node.body.body, currentList.child);
         }
+      }
+      else {
+        recurse(node.body.body, currentList);
       }
     });
   }

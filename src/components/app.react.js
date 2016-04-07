@@ -98,7 +98,7 @@ export default class App extends Component {
       unlike the previous two, we use linked-list to represent the structure that we want, eg. within Forstatement, there should be a Ifstatement and 
       it is represented by the property next in the linked list
     */
-    const checkAgainst = {value: "ForStatement", next: {value: "IfStatement", next: null}};
+    const checkAgainst = {value: "ForStatement", child: {value: "IfStatement", child: null}};
     const checkResult = checkStructure(arr, checkAgainst);
     let obj = {};
     ["ForStatement", "IfStatement"].forEach(value => {
