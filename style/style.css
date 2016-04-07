@@ -1,0 +1,42 @@
+#container {
+  padding: 10px;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.CodeMirror {
+  margin-top: 50px;
+  width: 700px;
+  height: 500px;
+}
+
+.ReactCodeMirror {
+  width: 900px;
+}
+
+.parent-select {
+  width: 200px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.feedback-container {
+  float: right;
+  width: 600px;
+  margin-top: -40%;
+  height: 550px;
+}
+
+.feedback-header {
+  text-align: center;
+}
+
+.feedback-list {
+  margin-top: 10px;
+}
+
+.hide {
+  display: none;
+}
