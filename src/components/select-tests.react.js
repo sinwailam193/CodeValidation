@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 export default class SelectTests extends Component {
 
+  /*
+    This is the constructor method, and it is the first thing that gets run when the component is getting mounted onto the DOM.
+    The props is what we're inheriting from the Component library in React
+  */
   constructor(props) {
     super(props);
     this.state = {
@@ -19,6 +23,9 @@ export default class SelectTests extends Component {
     this.props.selectedTest(event.target.value);
   };
 
+  /*
+    This is rendering the SelectTests component
+  */
   render() {
     return (
       <div className="parent-select">

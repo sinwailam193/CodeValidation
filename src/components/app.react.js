@@ -3,7 +3,7 @@ import Codemirror from 'react-codemirror';
 import esprima from 'esprima';
 import SelectTests from './select-tests.react';
 import FeedBack from './feedback.react';
-import { checkCode } from '../utils';
+import { checkBlackCode, checkWhiteCode } from '../utils';
 
 export default class App extends Component {
 
@@ -52,7 +52,7 @@ export default class App extends Component {
     const result = esprima.parse(code, { sourceType: 'script' }); 
     const arr = [...result.body];
     const checkAgainst = ["ForStatement", "IfStatement", "VariableDeclaration"];
-    const checkResult = checkCode(arr, checkAgainst);
+    const checkResult = checkWhiteCode(arr, checkAgainst);
     let obj = {};
     checkAgainst.forEach((value) => {
       if(checkResult.indexOf(value) < 0) {
@@ -72,7 +72,7 @@ export default class App extends Component {
     const result = esprima.parse(code, { sourceType: 'script' }); 
     const arr = [...result.body];
     const checkAgainst = ["ForStatement", "IfStatement", "VariableDeclaration", "WhileStatement"];
-    const checkResult = checkCode(arr, checkAgainst);
+    const checkResult = checkBlackCode(arr, checkAgainst);
     let obj = {};
     checkAgainst.forEach((value) => {
       if(value === "WhileStatement" || value === "IfStatement") {
@@ -131,7 +131,7 @@ export default class App extends Component {
   };
 
   /*
-    This is rendering the App component here
+    This is rendering the App component
   */
   render() {
     const {whiteForStatement, whiteIfStatement, whiteVariableDeclaration, blackForStatement, blackIfStatement, blackVariableDeclaration, blackWhileStatement, selectedTest} = this.state;
