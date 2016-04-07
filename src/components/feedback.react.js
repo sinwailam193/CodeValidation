@@ -17,9 +17,7 @@ export default class FeedBack extends Component {
     const {whiteForStatement, whiteVariableDeclaration, blackIfStatement, blackWhileStatement, structureForStatement, structureIfStatement, selectedTest} = this.props;
     if(selectedTest === "Blacklist of specific functionality") {
       return (
-        <ul>
-          <p className={"feedback-list " + (blackWhileStatement && blackIfStatement ? "hide" : "")}>This program MUST NOT use a 'while loop' or an 'if statement'.</p>
-        </ul>
+        <p className={"feedback-list " + (blackWhileStatement && blackIfStatement ? "hide" : "")}>This program MUST NOT use a 'while loop' or an 'if statement'.</p>
       );
     }
     else if(selectedTest === "Whitelist of specific functionality" || selectedTest === "") {
